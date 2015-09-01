@@ -15,13 +15,23 @@ background-image: url(pantone.jpg)
 
 # Agenda
 
-1. Introduction
-2. Deep-dive
+1. What's Vert.x ?
+2. Vert.x core API
+3. Distributed Eventbus
+4. REST
+5. Authentication / Authorisation
+6. MongoDB
+7. Vert.x unit
+8. Conclusion
 
-{{md  .. /path /to /content.md }} 
 ---
 
-# Introduction
+# What's Vert.x ?
+
+---
+
+# Vert.x core API
+
 ```java
 public class Main{
    public static void main(String[] args){
