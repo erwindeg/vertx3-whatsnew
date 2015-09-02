@@ -30,6 +30,8 @@ background-image: url(pantone.jpg)
 
 ##Vert.x is a tool-kit for building reactive applications on the JVM.
 
+###More info on reactive: http://www.reactivemanifesto.org/
+
 ---
 
 # Vert.x features
@@ -74,3 +76,22 @@ $vertx run monitor.js -cluster
 ```
 ---
 # Shared data
+```java
+public class MapVerticle extends AbstractVerticle {
+	public void start() throws Exception {
+		vertx.sharedData().<String, String> getClusterWideMap("mymap",
+				result -> {
+					if (result.succeeded())
+						startTimer(result.result());
+				});
+	}
+
+	public void startTimer(AsyncMap<String, String> map) {
+		vertx.setPeriodic(1000, arg -> {
+			map.put("time", System.currentTimeMillis() + "", res -> {
+			});
+		});
+	}
+}
+```
+---
