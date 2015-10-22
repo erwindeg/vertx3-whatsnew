@@ -1,3 +1,5 @@
+package nl.edegier.verticle;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.shareddata.AsyncMap;
 

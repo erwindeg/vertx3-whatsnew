@@ -1,0 +1,1 @@
+vertx run maven:io.vertx:vertx-shell:3.1.0 -conf shell.json

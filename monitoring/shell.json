@@ -1,0 +1,5 @@
+{
+    "telnetOptions": {
+        "port": 5000
+    }
+}

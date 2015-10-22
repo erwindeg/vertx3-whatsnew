@@ -1,3 +1,4 @@
+var eb = vertx.eventBus();
 vertx.setPeriodic(1000, function (id) {
-  console.log("timer fired!");
+	eb.publish("event", {"eventmessage":"hello"});
 });
