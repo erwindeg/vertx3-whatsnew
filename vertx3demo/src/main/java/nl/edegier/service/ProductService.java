@@ -9,11 +9,13 @@ import io.vertx.ext.web.RoutingContext;
 
 public class ProductService {
 
-	List<JsonObject> products = Arrays.asList(new JsonObject[]{new JsonObject().put("name","Catfood").put("price", "4.50")});
+	List<JsonObject> products = Arrays.asList(new JsonObject[]{
+			new JsonObject().put("name","Catfood").put("price", "4.50"),new JsonObject().put("name","Dogfood").put("price", "6.50")});
 	
 	
 	public void getProducts(RoutingContext routingContext) {
-		routingContext.response().end(new JsonArray(products).toString());
+		routingContext.response().end(new JsonArray(products).
+				toString());
 	}
 
 	

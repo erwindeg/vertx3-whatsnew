@@ -7,7 +7,7 @@
 	<name>Vert.x 3 demonstration</name>
 	<description>Vert.x 3 demonstration</description>
 	<properties>
-		<vertx.version>3.1.0</vertx.version>
+		<vertx.version>3.3.0</vertx.version>
 	</properties>
 	<dependencies>
 		<dependency>

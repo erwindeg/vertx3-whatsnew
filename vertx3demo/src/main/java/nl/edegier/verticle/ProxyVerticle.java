@@ -1,6 +1,7 @@
 package nl.edegier.verticle;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -15,13 +16,12 @@ public class ProxyVerticle extends AbstractVerticle {
 	@Override
 	public void start() throws Exception {
 		DeploymentOptions options = new DeploymentOptions().setConfig(new JsonObject().put("address", "mongo"));
-		vertx.deployVerticle(new MongoServiceVerticle(), options, res -> {
-			saveMessage();
-		});
+		vertx.deployVerticle(new MongoServiceVerticle(), options, this::saveMessage);
 
 	}
 
-	private void saveMessage() {
+	private void saveMessage(AsyncResult<String> deployResult) {
+		vertxLogger.info(deployResult.result());
 		MongoService mongo = MongoService.createEventBusProxy(vertx, "mongo");
 
 		mongo.save("message", new JsonObject().put("content", "helloworld"), result -> {

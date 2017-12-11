@@ -4,12 +4,10 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.sockjs.BridgeOptions;
 import io.vertx.ext.web.handler.sockjs.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import io.vertx.ext.web.sstore.LocalSessionStore;
 import nl.edegier.service.ProductService;
 
 public class WebVerticle extends AbstractVerticle {
@@ -22,7 +20,8 @@ public class WebVerticle extends AbstractVerticle {
 	@Override
 	public void start() throws Exception {
 		productService = new ProductService();
-		vertx.createHttpServer(new HttpServerOptions().setPort(PORT)).requestHandler(req -> setupRouter().accept(req))
+		vertx.createHttpServer(new HttpServerOptions().
+				setPort(PORT)).requestHandler(setupRouter()::accept)
 				.listen();
 
 		startSendingMessages();
@@ -30,27 +29,30 @@ public class WebVerticle extends AbstractVerticle {
 
 	private void startSendingMessages() {
 		vertx.setPeriodic(1000, arg -> {
-			vertx.eventBus().publish("event", new JsonObject().put("eventmessage", "hello"));
+			vertx.eventBus().publish("event", new JsonObject().
+					put("eventmessage", "hello"));
 		});
 	}
 
 	private Router setupRouter() {
 		Router router = Router.router(vertx);
-		
-		router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
-		
+			
 		//Static routing
-		router.get("/").handler(StaticHandler.create().setWebRoot(PATH).setIndexPage(WELCOME_PAGE));
-		router.get("/" + PATH + "/*").handler(StaticHandler.create().setWebRoot(PATH));
+		router.get("/").handler(StaticHandler.create().setWebRoot(PATH)
+				.setIndexPage(WELCOME_PAGE));
+		router.get("/" + PATH + "/*").handler(StaticHandler.
+				create().setWebRoot(PATH));
 
 		//API routing
 		Router apiRouter = Router.router(vertx);
-		apiRouter.get("/product").handler(productService::getProducts);
 		router.mountSubRouter("/api", apiRouter);
+		apiRouter.get("/product").handler(productService::getProducts);
+		
 
 		//Event Bus bridge
 		SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
-		sockJSHandler.bridge(new BridgeOptions().addOutboundPermitted(new PermittedOptions().setMatch(new JsonObject())));
+		sockJSHandler.bridge(new BridgeOptions().addOutboundPermitted(
+				new PermittedOptions().setMatch(new JsonObject())));
 		router.route("/eventbus/*").handler(sockJSHandler);
 
 		return router;

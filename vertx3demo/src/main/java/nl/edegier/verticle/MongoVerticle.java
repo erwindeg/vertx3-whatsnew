@@ -4,12 +4,9 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 
 public class MongoVerticle extends AbstractVerticle {
-	private final static Logger LOGGER = LoggerFactory.getLogger(MongoVerticle.class.getName());
 
 	MongoClient mongo;
 
@@ -24,7 +21,8 @@ public class MongoVerticle extends AbstractVerticle {
 	
 	
 	private void insertMessage(Message<String> message){
-		this.mongo.insert("message", new JsonObject().put("message", message.body()), result -> {
+		this.mongo.insert("message", new JsonObject().put("message", 
+				message.body()), result -> {
 			if (result.succeeded()) {
 				message.reply("save success");
 			} else {

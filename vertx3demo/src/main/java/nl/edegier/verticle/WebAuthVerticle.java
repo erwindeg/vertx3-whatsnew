@@ -7,6 +7,7 @@ import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.AuthHandler;
 import io.vertx.ext.web.handler.BasicAuthHandler;
+import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.ErrorHandler;
 import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
@@ -35,24 +36,24 @@ public class WebAuthVerticle extends AbstractVerticle {
 
 	private Router setupRouter() {
 		Router router = Router.router(vertx);
-		
-		router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
-		
-		//Static routing
-		router.get("/").handler(StaticHandler.create().setWebRoot(PATH).setIndexPage(WELCOME_PAGE));
-		router.get("/" + PATH + "/*").handler(StaticHandler.create().setWebRoot(PATH));
-
-		//API routing
-		Router apiRouter = Router.router(vertx);
-		router.get("/api/hello-world").handler(context -> context.response().end("{\"content\" : \"Hello world!\" }"));
-		router.mountSubRouter("/api", apiRouter);
 
 		AuthProvider authProvider = new MockAuthProvider();
 		AuthHandler basicAuthHandler = BasicAuthHandler.create(authProvider);
 		basicAuthHandler.addAuthority("admin");
-		router.route().handler(basicAuthHandler).failureHandler(ErrorHandler.create());
+		router.route("/*").handler(basicAuthHandler).failureHandler(ErrorHandler.create());
 		
-		
+		router.route().handler(CookieHandler.create());
+		router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
+
+		// Static routing
+		router.get("/").handler(StaticHandler.create().setWebRoot(PATH).setIndexPage(WELCOME_PAGE));
+		router.get("/" + PATH + "/*").handler(StaticHandler.create().setWebRoot(PATH));
+
+		// API routing
+		Router apiRouter = Router.router(vertx);
+		router.get("/api/hello-world").handler(context -> context.response().end("{\"content\" : \"Hello world!\" }"));
+		router.mountSubRouter("/api", apiRouter);
+
 		return router;
 	}
 }
